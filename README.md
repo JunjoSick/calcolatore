@@ -1,1 +1,2 @@
 # calcolatore
+Farà schifo? Probabile
