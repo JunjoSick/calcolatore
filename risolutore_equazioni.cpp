@@ -44,6 +44,12 @@ private:
 	}
 
 	auto thirdGrade() {
+        using a = coefficient[0];
+        using b = coefficient[1];
+        using c = coefficient[2];
+        using d = coefficient[3];
+    //da implementare 11 variabili di calcolo per la formula di risoluzione le funzioni sono recuperabili a :https://github.com/shril/CubicEquationSolver/blob/e8452bf964e0e73a6246bd4d2e17257999590874/CubicEquationSolver.py#L104
+    //dopo posso scrivertele ma devi aggiungerle te
 
 	}
 
