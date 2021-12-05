@@ -4,7 +4,8 @@
 
 enum solution : unsigned char {
 	IMPOSSIBLE=0,
-	INDETERMINATE
+	INDETERMINATE,
+	NON_SENSE
 };
 
 template <int size> class equation {
@@ -13,8 +14,11 @@ private:
 	std::array<double, size> coefficient;
 
 	auto firstGrade() {
-		if (coefficient[0] == 0) {
-			if (coefficient[1] == 0) {
+		using a = coefficient[0];
+		using b = coefficient[1];
+
+		if (a == 0) {
+			if (b == 0) {
 				throw INDETERMINATE;
 			}
 			else {
@@ -22,12 +26,21 @@ private:
 			}
 		}
 		else {
-			return -coefficient[1] / coefficient[a];
+			std::array<double, 1> x = -b / a;
+			return  x
 		}
 	}
 
 	auto secondGrade() {
+		using a = coefficient[0];
+		using b = coefficient[1];
+		using c = coefficient[2];
 
+		auto delta = pow(b, 2) - 4 * a * c;
+		if (delta < 0) throw NON_SENSE;
+		delta = sqrt(delta);
+		std::array<double, 2> x = { (-b + delta)/(2 * a), -(b + delta) / (2 * a) };
+		return x
 	}
 
 	auto thirdGrade() {
