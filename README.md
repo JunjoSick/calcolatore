@@ -1,2 +1,15 @@
-# calcolatore
-Farà schifo? Probabile
+# Calculator
+Library to solve equations from 1 to 3 grade and determine vampire numbers
+# Functions
+```cpp
+bool isVampire(uint64_t number);
+```
+#Classes
+```cpp
+equation <2> linearEquation;
+equation <3> quadraticEquation;
+eqaution <4> cubicEquation;
+
+linearEquation = {3, 5}; // 3 and 5 are coefficients, 3x+5=0
+std::array <double, 2> solutions = linearEquation.solve();
+```
