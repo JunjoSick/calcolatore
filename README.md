@@ -11,5 +11,8 @@ equation <3> quadraticEquation;
 eqaution <4> cubicEquation;
 
 linearEquation = {3, 5}; // 3 and 5 are coefficients, 3x+5=0
-std::array <double, 2> solutions = linearEquation.solve();
+double solutions = linearEquation.solve();
+
+quadraticEquation = {1, 4, 4};
+std::array<double, 2> solutions = quadraticEquation.solve();
 ```
