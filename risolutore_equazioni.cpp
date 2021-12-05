@@ -50,11 +50,11 @@ private:
 public:
 	auto solve() {
 		switch (coefficient.size()) {
-		case 1: firstGrade();
+		case 2: firstGrade();
 			break;
-		case 2: secondGrade();
+		case 3: secondGrade();
 			break;
-		case 3: thirdGrade();
+		case 4: thirdGrade();
 			break;
 		default:
 			throw std::exception("grado troppo alto");
