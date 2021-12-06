@@ -2,6 +2,8 @@
 #include <array>
 #include <exception>
 #include <complex>
+#include <iostream>
+#include <cstdarg>
 
 enum solution:unsigned char
 {
@@ -11,9 +13,11 @@ enum solution:unsigned char
 };
 template < int size > class equation
 {
-private:
+public:
   std::array < double, size > coefficient;
-    auto & firstGrade ()
+private:
+
+    auto firstGrade ()
   {
     auto & a = coefficient[0];
     auto & b = coefficient[1];
@@ -30,12 +34,12 @@ private:
       }
     else
       {
-	std::complex < double >x;
-	x.real (-b / a);
+	std::array < std::complex < double >, size > x;
+	x[0].real (-b / a);
 	return x;
       }
   }
-  auto & secondGrade ()
+  auto secondGrade ()
   {
     auto & a = coefficient[0];
     auto & b = coefficient[1];
@@ -44,7 +48,7 @@ private:
     if (delta < 0)
       throw NON_SENSE;
     delta = sqrt (delta);
-    std::array < std::complex < double >, 2 > x;
+    std::array < std::complex < double >, size > x;
     x[0].real ((-b + delta) / (2 * a));
     x[1].real (-(b + delta) / (2 * a));
     return x;
@@ -63,7 +67,7 @@ private:
   {
     return pow (g, 2) / 4.0 + pow (f, 3) / 27.0;
   }
-  auto & thirdGrade ()
+  auto thirdGrade ()
   {
     auto & a = coefficient[0];
     auto & b = coefficient[1];
@@ -72,7 +76,7 @@ private:
     auto f = findF (a, b, c);
     auto g = findG (a, b, c, d);
     auto h = findH (g, f);
-    std::array < std::complex < double >, 3 > x;
+    std::array < std::complex < double >, size > x;
     double x1;
     if (f == 0 && g == 0 && h == 0)
       {				// All 3 Roots are Real and Equal
@@ -91,8 +95,8 @@ private:
       }
     else if (h <= 0)
       {				// All 3 roots are Real
-	double i = sqrt (pow(g,2) / 4.0 - h);
-	double j = pow(i,1 / 3.0);
+	double i = sqrt (pow (g, 2) / 4.0 - h);
+	double j = pow (i, 1 / 3.0);
 	double k = acos (-(g / (2 * i)));
 	double L = j * -1;
 	double M = cos (k / 3.0);
@@ -111,16 +115,16 @@ private:
 	double R = -(g / 2.0) + sqrt (h);
 	double S, T, U;
 	if (R >= 0)
-	  S = pow(R ,1 / 3.0);
+	  S = pow (R, 1 / 3.0);
 	else
 	  {
-	    S = pow(-R,1 / 3.0) * -1;
+	    S = pow (-R, 1 / 3.0) * -1;
 	    T = -(g / 2.0) - sqrt (h);
 	  }
 	if (T >= 0)
 	  U = pow (T, 1 / 3.0);
 	else
-	  U = pow(-T,1 / 3.0) * -1;
+	  U = pow (-T, 1 / 3.0) * -1;
 	x1 = (S + U) - (b / (3.0 * a));
 	x[0].real (x1);
 	x[1].real (-(S + U) / 2 - (b / (3.0 * a)));
@@ -131,21 +135,40 @@ private:
       }
   }
 public:
-  auto & solve ()
+
+  auto solve ()
   {
-    std::array < std::complex<double>, size > x;
+    std::array < std::complex < double >, size > x;
     switch (size)
       {
       case 2:
-	return x = firstGrade ();
+	x = firstGrade ();
+	return x;
       case 3:
-	return x = secondGrade ();
-	break;
+	x = secondGrade ();
+	return x;
       case 4:
-	return x = thirdGrade ();
-	break;
+	x = thirdGrade ();
+	return x;
       default:
-	throw std::exception ("Grade too high");
+	throw std::runtime_error ("Grade too high");
       }
   }
 };
+
+int main ()
+{
+  equation < 2 > a;
+
+  a.coefficient =
+  {
+  7, 2};
+
+  auto b = a.solve ();
+for (auto & element:b)
+    {
+      std::cout << element << "\t";
+    }
+
+  return 0;
+}
