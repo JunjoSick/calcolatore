@@ -12,8 +12,8 @@ equation <4> cubicEquation;
 equation <5> quarticEquation;
 
 linearEquation = {3, 5}; // 3 and 5 are coefficients, 3x+5=0
-std::array<std::complex<double>, 1> solution = linearEquation.solve(); //-5/3
+std::vector<std::complex<double>> solution = linearEquation.solve(); //{-5/3,0}
 
 quadraticEquation = {1, 4, 4};
-std::array<std::complex<double>, 2> solutions = quadraticEquation.solve(); //{-2, -2}
+std::vector<std::complex<double>> solutions = quadraticEquation.solve(); //{{-2,0}, {-2,0}}
 ```
