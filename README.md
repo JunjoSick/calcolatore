@@ -1,5 +1,5 @@
 # Calculator
-A program to solve equations from 1 to 3 grade and determine vampire numbers
+A program to solve equations from 1 to 3 (4 wip) grade and determine vampire numbers
 ## Functions:
 ```cpp
 bool isVampire(uint64_t number);
