@@ -119,7 +119,7 @@ private:
 			x.push_back({ x3,0 });
 			return x;
 		}
-		else if (h > 0)
+		else // h > 0
 		{				// One Real Root and two Complex Roots
 			double R = -(g / 2.0) + sqrt(h);
 			double S;
@@ -201,10 +201,11 @@ int main()
 	
 	equation a;
 	double input;
+	std::cout.precision(17);
 	do {
 		std::cout << "Type coefficients (type finally a no-double): ";
 		while (std::cin >> input) { a.coefficients.push_back(input); }
-
+		
 		std::cin.clear();
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
