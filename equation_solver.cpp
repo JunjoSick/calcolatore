@@ -1,28 +1,41 @@
 #include <math.h>
-#include <vector>
-#include <exception>
 #include <complex>
-#include <iostream>
+
+#include <vector>
 #include <initializer_list>
+
+#include <exception>
+#include <limits>
+
+#include <iostream>
+
 
 enum solution :unsigned char
 {
 	IMPOSSIBLE = 0,
 	INDETERMINATE
 };
+
 class equation
 {
 public:
 
-	std::vector < double > coefficient;
+	std::vector < double > coefficients;
 
 private:
 
 	auto firstGrade()
 	{
-		auto& a = coefficient[0];
-		auto& b = coefficient[1];
-		if (a == 0)
+		auto& a = coefficients[0];
+		auto& b = coefficients[1];
+
+		if (a != 0)
+		{
+			std::vector < std::complex < double >> x;
+			x.push_back({ -b / a,0 });
+			return x;
+		}
+		else
 		{
 			if (b == 0)
 			{
@@ -33,29 +46,19 @@ private:
 				throw IMPOSSIBLE;
 			}
 		}
-		else
-		{
-			std::vector < std::complex < double >> x;
-			x.push_back({ -b / a,0 });
-			return x;
-		}
 	}
 	auto secondGrade()
 	{
-		auto& a = coefficient[0];
-		auto& b = coefficient[1];
-		auto& c = coefficient[2];
-		auto delta = pow(b, 2) - 4 * a * c;
-		delta = sqrt(abs(delta));
+		auto& a = coefficients[0];
+		auto& b = coefficients[1];
+		auto& c = coefficients[2];
+
+		std::complex<double> delta = { pow(b, 2) - 4 * a * c, 0 };
+		delta = sqrt(delta);
+
 		std::vector < std::complex < double >> x;
-		if (delta >= 0) {
-			x.push_back({ (-b + delta) / (2 * a),0 });
-			x.push_back({ -(b + delta) / (2 * a),0 });
-		}
-		else {
-			x.push_back({ -b / (2 * a),delta / (2 * a) });
-			x.push_back({ -b / (2 * a),-delta / (2 * a) });
-		}
+		x.push_back((-b+delta)/(2*a));
+		x.push_back(-(b + delta) / (2 * a));
 
 		return x;
 	}
@@ -75,10 +78,10 @@ private:
 	}
 	auto thirdGrade()
 	{
-		auto& a = coefficient[0];
-		auto& b = coefficient[1];
-		auto& c = coefficient[2];
-		auto& d = coefficient[3];
+		auto& a = coefficients[0];
+		auto& b = coefficients[1];
+		auto& c = coefficients[2];
+		auto& d = coefficients[3];
 		auto f = findF(a, b, c);
 		auto g = findG(a, b, c, d);
 		auto h = findH(g, f);
@@ -137,27 +140,27 @@ private:
 	//------------------Fourth grade---------------------
 
 	auto fourthGrade() {
-		auto& a = coefficient[0];
-		auto& b = coefficient[1];
-		auto& c = coefficient[2];
-		auto& d = coefficient[3];
-		auto& e = coefficient[4];
+		auto& a = coefficients[0];
+		auto& b = coefficients[1];
+		auto& c = coefficients[2];
+		auto& d = coefficients[3];
+		auto& e = coefficients[4];
 
 		auto q = 12 * a * e - 3 * b * d + c * c;
 		auto s = 27 * a * d * d - 72 * a * c * e + 27 * b * b * e - 9 * b * c * d + 2 * pow(c, 3);
-		auto d0 = cbrt((s + sqrt(s * s - 4 * pow(q, 3))) * 0.5);
+		auto d0 = pow((s + sqrt(static_cast<std::complex<double>>(s * s - 4 * pow(q, 3)))) * 0.5, 1/3);
 		auto p = (8 * a * c - 3 * b * b) / (8 * a * a);
 
 		auto Q = sqrt(-2 / 3 * p + 1 / (3 * a) * (d0 + q / d0)) * 0.5;
 		auto S = (8 * a * a * d - 4 * a * b * c + pow(b, 3)) / (8 * pow(a, 3));
-		auto square = 0.5 * sqrt(-4 * Q * Q - 2 * p + S / Q);
+		auto square = 0.5 * sqrt(-4.0 * Q * Q - 2 * p + S / Q);
 		auto quozient = -b / (4 * a);
 
 		std::vector < std::complex < double >> x;
-		x.push_back({ quozient - Q + square,0 });
-		x.push_back({ quozient - Q - square,0 });
-		x.push_back({ quozient + Q + square,0 });
-		x.push_back({ quozient + Q - square,0 });
+		x.push_back( quozient - Q + square );
+		x.push_back( quozient - Q - square );
+		x.push_back( quozient + Q + square );
+		x.push_back( quozient + Q - square );
 		return x;
 	}
 
@@ -165,15 +168,18 @@ public:
 
 	equation(){}
 
-	equation(std::initializer_list<double> list) : coefficient(list) {}
+	equation(std::initializer_list<double> list) : coefficients(list) {}
 
 	auto solve()
 	{
 		std::vector < std::complex < double >> x;
-		switch (coefficient.size())
+		switch (coefficients.size())
 		{
 		case 2:
-			x = firstGrade();
+			try {
+				x = firstGrade();
+			}
+			catch (solution& s) { throw s; }
 			return x;
 		case 3:
 			x = secondGrade();
@@ -192,22 +198,44 @@ public:
 
 int main()
 {
-	std::cout << "Inserire coefficienti (concludere l'inserimento con un char): ";
+	
 	equation a;
 	double input;
-	while (std::cin >> input) a.coefficient.push_back(input);
-	decltype(a.solve()) b;
-	try {
-		b = a.solve();
-	}
-	catch (std::runtime_error& e) {
-		std::cout << e.what();
-		return 1;
-	}
-	
-	for (auto& element : b)
-	{
-		std::cout << element << "\t";
-	}
+	do {
+		std::cout << "Type coefficients (type finally a no-double): ";
+		while (std::cin >> input) { a.coefficients.push_back(input); }
+
+		std::cin.clear();
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		if (a.coefficients.empty()) { return 0; } //exit from loop
+
+		decltype(a.solve()) b;
+
+		try {
+			b = a.solve();
+		}
+		catch (std::runtime_error& e) {
+			std::cout << e.what();
+			continue;
+		}
+		catch (solution& s) {
+			switch (s) {
+			case IMPOSSIBLE: std::cout << "impossible equation"; continue;
+			case INDETERMINATE: std::cout << "indeterminate equation"; continue;
+			default: std::cout << "Error in first grade equation"; continue;
+			}
+		}
+
+		for (auto& element : b)
+		{
+			std::cout << element << "\t";
+		}
+
+		a.coefficients.clear();
+
+		std::cout << "\n";
+
+	} while (true);
 	return 0;
 }
