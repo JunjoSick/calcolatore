@@ -1,15 +1,15 @@
 # Calculator
-A program to solve equations from 1 to 3 grade and determine vampire numbers
+A program to solve equations from 1 to 3 (4 wip) grade and determine vampire numbers
 ## Functions:
 ```cpp
 bool isVampire(uint64_t number);
 ```
 ## Classes:
 ```cpp
-equation <2> linearEquation;
-equation <3> quadraticEquation;
-equation <4> cubicEquation;
-equation <5> quarticEquation;
+equation linearEquation;
+equation quadraticEquation;
+equation cubicEquation;
+equation quarticEquation;
 
 linearEquation = {3, 5}; // 3 and 5 are coefficients, 3x+5=0
 std::vector<std::complex<double>> solution = linearEquation.solve(); //{-5/3,0}
