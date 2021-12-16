@@ -1,14 +1,12 @@
-#include <math.h>
+#include <cmath>
 #include <complex>
 
 #include <vector>
 #include <initializer_list>
 
-#include <exception>
 #include <limits>
 
 #include <iostream>
-
 
 enum solution :unsigned char
 {
@@ -32,7 +30,7 @@ private:
 		if (a != 0)
 		{
 			std::vector < std::complex < double >> x;
-			x.push_back({ -b / a,0 });
+			x.emplace_back( -b / a,0 );
 			return x;
 		}
 		else
@@ -57,22 +55,23 @@ private:
 		delta = sqrt(delta);
 
 		std::vector < std::complex < double >> x;
+        x.reserve(2);
 		x.push_back((-b+delta)/(2*a));
 		x.push_back(-(b + delta) / (2 * a));
 
 		return x;
 	}
 	//--------------------- Third grade----------------------
-	inline auto findF(double a, double b, double c)
+	static inline auto findF(double a, double b, double c)
 	{
 		return (3.0 * c / a - pow(b, 2) / pow(a, 2)) / 3.0;
 	}
-	inline auto findG(double a, double b, double c, double d)
+	static inline auto findG(double a, double b, double c, double d)
 	{
 		return (2.0 * pow(b, 3) / pow(a, 3) - 9.0 * b * c / pow(a, 2) +
 			27.0 * d / a) / 27.0;
 	}
-	inline auto findH(double g, double f)
+	static inline auto findH(double g, double f)
 	{
 		return pow(g, 2) / 4.0 + pow(f, 3) / 27.0;
 	}
@@ -97,9 +96,10 @@ private:
 			{
 				x1 = pow((-d / (1.0 * a)), (1 / 3.0));
 			}
-			x.push_back({ x1,0 });
-			x.push_back({ x1,0 });
-			x.push_back({ x1,0 });
+            x.reserve(3);
+			x.emplace_back( x1,0 );
+			x.emplace_back( x1,0 );
+			x.emplace_back( x1,0 );
 			return x;
 		}
 		else if (h <= 0)
@@ -114,9 +114,10 @@ private:
 			x1 = 2 * j * cos(k / 3.0) - (b / (3.0 * a));
 			double x2 = L * (M + N) + P;
 			double x3 = L * (M - N) + P;
-			x.push_back({ x1,0 });;
-			x.push_back({ x2,0 });
-			x.push_back({ x3,0 });
+            x.reserve(3);
+			x.emplace_back( x1,0 );
+			x.emplace_back( x2,0 );
+			x.emplace_back( x3,0 );
 			return x;
 		}
 		else // h > 0
@@ -130,9 +131,10 @@ private:
 			if (T >= 0)	U = pow(T, 1 / 3.0);
 			else U = pow(-T, 1 / 3.0) * -1;
 			x1 = (S + U) - (b / (3.0 * a));
-			x.push_back({ x1,0 });
-			x.push_back({ -(S + U) / 2 - b / (3.0 * a), (S - U) * sqrt(3) * 0.5 });
-			x.push_back({ -(S + U) / 2 - b / (3.0 * a),-(S - U) * sqrt(3) * 0.5 });
+            x.reserve(3);
+			x.emplace_back( x1,0 );
+			x.emplace_back( -(S + U) / 2 - b / (3.0 * a), (S - U) * sqrt(3) * 0.5 );
+			x.emplace_back( -(S + U) / 2 - b / (3.0 * a),-(S - U) * sqrt(3) * 0.5 );
 			return x;
 		}
 	}
@@ -157,6 +159,7 @@ private:
 		auto quozient = -b / (4 * a);
 
 		std::vector < std::complex < double >> x;
+        x.reserve(4);
 		x.push_back( quozient - Q + square );
 		x.push_back( quozient - Q - square );
 		x.push_back( quozient + Q + square );
@@ -166,7 +169,7 @@ private:
 
 public:
 
-	equation(){}
+	equation()= default;
 
 	equation(std::initializer_list<double> list) : coefficients(list) {}
 
@@ -198,45 +201,43 @@ public:
 
 int main()
 {
-	
 	equation a;
 	double input;
 	std::cout.precision(17);
-	do {
-		std::cout << "Type coefficients (type finally a no-double): ";
-		while (std::cin >> input) { a.coefficients.push_back(input); }
-		
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    while(true){
+        std::cout << "Type coefficients (type finally a no-double): ";
+        while (std::cin >> input) { a.coefficients.push_back(input); }
 
-		if (a.coefficients.empty()) { return 0; } //exit from loop
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-		decltype(a.solve()) b;
+        if (a.coefficients.empty()) { return 0; } //exit from loop
 
-		try {
-			b = a.solve();
-		}
-		catch (std::runtime_error& e) {
-			std::cout << e.what();
-			continue;
-		}
-		catch (solution& s) {
-			switch (s) {
-			case IMPOSSIBLE: std::cout << "impossible equation"; continue;
-			case INDETERMINATE: std::cout << "indeterminate equation"; continue;
-			default: std::cout << "Error in first grade equation"; continue;
-			}
-		}
+        decltype(a.solve()) b;
 
-		for (auto& element : b)
-		{
-			std::cout << element << "\t";
-		}
+        try {
+            b = a.solve();
+        }
+        catch (std::runtime_error& e) {
+            std::cout << e.what();
+            continue;
+        }
+        catch (solution& s) {
+            switch (s) {
+                case IMPOSSIBLE: std::cout << "impossible equation"; continue;
+                case INDETERMINATE: std::cout << "indeterminate equation"; continue;
+                default: std::cout << "Error in first grade equation"; continue;
+            }
+        }
 
-		a.coefficients.clear();
+        for (auto& element : b)
+        {
+            std::cout << element << "\t";
+        }
 
-		std::cout << "\n";
+        a.coefficients.clear();
 
-	} while (true);
+        std::cout << "\n";
+    }
 	return 0;
 }
