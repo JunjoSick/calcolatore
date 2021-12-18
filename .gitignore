@@ -59,6 +59,7 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+**/out
 
 ### VisualStudio template
 ## https://github.com/github/gitignore/blob/master/VisualStudio.gitignore

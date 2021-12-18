@@ -1,6 +1,11 @@
-#include <math.h>
+#include <cmath>
+
 #include <cstdint>
 
-bool isVampire(uint64_t a) { //suppose a is greater than 1000 
+#include <concepts>
+
+#include "number_costraints.hpp"
+
+template <natural t> bool isVampire(t a) { //suppose a is greater than 1000 
 	return true;
 }

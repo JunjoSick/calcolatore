@@ -5,8 +5,11 @@
 #include <initializer_list>
 
 #include <limits>
+#include <concepts>
 
 #include <iostream>
+
+#include "number_costraints.hpp"
 
 enum solution :unsigned char
 {
@@ -14,7 +17,7 @@ enum solution :unsigned char
 	INDETERMINATE
 };
 
-class equation
+class function
 {
 public:
 
@@ -56,22 +59,22 @@ private:
 
 		std::vector < std::complex < double >> x;
         x.reserve(2);
-		x.push_back((-b+delta)/(2*a));
-		x.push_back(-(b + delta) / (2 * a));
+		x.emplace_back((-b+delta)/(2*a));
+		x.emplace_back(-(b + delta) / (2 * a));
 
 		return x;
 	}
 	//--------------------- Third grade----------------------
-	static inline auto findF(double a, double b, double c)
+	inline auto findF(double a, double b, double c)
 	{
 		return (3.0 * c / a - pow(b, 2) / pow(a, 2)) / 3.0;
 	}
-	static inline auto findG(double a, double b, double c, double d)
+	inline auto findG(double a, double b, double c, double d)
 	{
 		return (2.0 * pow(b, 3) / pow(a, 3) - 9.0 * b * c / pow(a, 2) +
 			27.0 * d / a) / 27.0;
 	}
-	static inline auto findH(double g, double f)
+	inline auto findH(double g, double f)
 	{
 		return pow(g, 2) / 4.0 + pow(f, 3) / 27.0;
 	}
@@ -81,9 +84,11 @@ private:
 		auto& b = coefficients[1];
 		auto& c = coefficients[2];
 		auto& d = coefficients[3];
+
 		auto f = findF(a, b, c);
 		auto g = findG(a, b, c, d);
 		auto h = findH(g, f);
+
 		std::vector < std::complex < double >> x;
 		double x1;
 		if (f == 0 && g == 0 && h == 0)
@@ -122,17 +127,17 @@ private:
 		}
 		else // h > 0
 		{				// One Real Root and two Complex Roots
-			double R = -(g / 2.0) + sqrt(h);
-			double S;
+			auto R = -(g / 2.0) + sqrt(h);
+			decltype(R) S;
 			if (R >= 0) S = pow(R, 1 / 3.0);
 			else S = pow(-R, 1 / 3.0) * -1;
 			auto T = -(g / 2.0) - sqrt(h);
-			double U;
+			decltype(T) U;
 			if (T >= 0)	U = pow(T, 1 / 3.0);
 			else U = pow(-T, 1 / 3.0) * -1;
 			x1 = (S + U) - (b / (3.0 * a));
             x.reserve(3);
-			x.emplace_back( x1,0 );
+			x.emplace_back( x1, 0 );
 			x.emplace_back( -(S + U) / 2 - b / (3.0 * a), (S - U) * sqrt(3) * 0.5 );
 			x.emplace_back( -(S + U) / 2 - b / (3.0 * a),-(S - U) * sqrt(3) * 0.5 );
 			return x;
@@ -160,20 +165,37 @@ private:
 
 		std::vector < std::complex < double >> x;
         x.reserve(4);
-		x.push_back( quozient - Q + square );
-		x.push_back( quozient - Q - square );
-		x.push_back( quozient + Q + square );
-		x.push_back( quozient + Q - square );
+		x.emplace_back( quozient - Q + square );
+		x.emplace_back( quozient - Q - square );
+		x.emplace_back( quozient + Q + square );
+		x.emplace_back( quozient + Q - square );
+		return x;
+	}
+
+	//------------------fifth grade and higher------------------------
+
+	auto genericMethod() {
+
+		std::vector < std::complex < double >> x;
+
 		return x;
 	}
 
 public:
 
-	equation()= default;
+	function() = default;
 
-	equation(std::initializer_list<double> list) : coefficients(list) {}
+	function(std::initializer_list<double> list) : coefficients(list) {}
 
-	auto solve()
+	template <number t> auto operator ()(t a) {
+		double b=0;
+		for (int i = 0; i < coefficients.size(); i++) {
+			b += coefficients[i]*pow(a, i);
+		}
+		return b;
+	}
+
+	auto zeroes() //assume grade is higher than 0
 	{
 		std::vector < std::complex < double >> x;
 		switch (coefficients.size())
@@ -194,39 +216,36 @@ public:
 			x = fourthGrade();
 			return x;
 		default:
-			throw std::runtime_error("Grade too high");
+			x = genericMethod();
+			return x;
 		}
 	}
 };
 
 int main()
 {
-	equation a;
+	function a;
 	double input;
 	std::cout.precision(17);
     while(true){
         std::cout << "Type coefficients (type finally a no-double): ";
-        while (std::cin >> input) { a.coefficients.push_back(input); }
+        while (std::cin >> input) { a.coefficients.emplace_back(input); }
 
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         if (a.coefficients.empty()) { return 0; } //exit from loop
 
-        decltype(a.solve()) b;
+        decltype(a.zeroes()) b;
 
         try {
-            b = a.solve();
-        }
-        catch (std::runtime_error& e) {
-            std::cout << e.what();
-            continue;
+            b = a.zeroes();
         }
         catch (solution& s) {
             switch (s) {
-                case IMPOSSIBLE: std::cout << "impossible equation"; continue;
-                case INDETERMINATE: std::cout << "indeterminate equation"; continue;
-                default: std::cout << "Error in first grade equation"; continue;
+                case IMPOSSIBLE: std::cout << "impossible function"; continue;
+                case INDETERMINATE: std::cout << "indeterminate function"; continue;
+                default: std::cout << "Error in first grade function"; continue;
             }
         }
 
