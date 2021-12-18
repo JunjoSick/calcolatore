@@ -7,8 +7,6 @@
 #include <limits>
 #include <concepts>
 
-#include <iostream>
-
 #include "number_costraints.hpp"
 
 enum solution :unsigned char
@@ -23,6 +21,22 @@ public:
 
 	std::vector < double > coefficients;
 
+	function() = default;
+
+	function(std::initializer_list<double> list) : coefficients(list) {}
+
+	template <number t> double operator ()(t a) {
+		double b = 0;
+		for (int i = 0; i < coefficients.size(); i++) {
+			b += coefficients[i] * pow(a, i);
+		}
+		return b;
+	}
+
+	auto derivative() {
+		return ((*this)(1 + 1.e-15) - (*this)(1)) / 1.e-15;
+	}
+
 private:
 
 	auto firstGrade()
@@ -33,7 +47,7 @@ private:
 		if (a != 0)
 		{
 			std::vector < std::complex < double >> x;
-			x.emplace_back( -b / a,0 );
+			x.emplace_back(-b / a, 0);
 			return x;
 		}
 		else
@@ -58,8 +72,8 @@ private:
 		delta = sqrt(delta);
 
 		std::vector < std::complex < double >> x;
-        x.reserve(2);
-		x.emplace_back((-b+delta)/(2*a));
+		x.reserve(2);
+		x.emplace_back((-b + delta) / (2 * a));
 		x.emplace_back(-(b + delta) / (2 * a));
 
 		return x;
@@ -101,10 +115,10 @@ private:
 			{
 				x1 = pow((-d / (1.0 * a)), (1 / 3.0));
 			}
-            x.reserve(3);
-			x.emplace_back( x1,0 );
-			x.emplace_back( x1,0 );
-			x.emplace_back( x1,0 );
+			x.reserve(3);
+			x.emplace_back(x1, 0);
+			x.emplace_back(x1, 0);
+			x.emplace_back(x1, 0);
 			return x;
 		}
 		else if (h <= 0)
@@ -119,10 +133,10 @@ private:
 			x1 = 2 * j * cos(k / 3.0) - (b / (3.0 * a));
 			double x2 = L * (M + N) + P;
 			double x3 = L * (M - N) + P;
-            x.reserve(3);
-			x.emplace_back( x1,0 );
-			x.emplace_back( x2,0 );
-			x.emplace_back( x3,0 );
+			x.reserve(3);
+			x.emplace_back(x1, 0);
+			x.emplace_back(x2, 0);
+			x.emplace_back(x3, 0);
 			return x;
 		}
 		else // h > 0
@@ -136,10 +150,10 @@ private:
 			if (T >= 0)	U = pow(T, 1 / 3.0);
 			else U = pow(-T, 1 / 3.0) * -1;
 			x1 = (S + U) - (b / (3.0 * a));
-            x.reserve(3);
-			x.emplace_back( x1, 0 );
-			x.emplace_back( -(S + U) / 2 - b / (3.0 * a), (S - U) * sqrt(3) * 0.5 );
-			x.emplace_back( -(S + U) / 2 - b / (3.0 * a),-(S - U) * sqrt(3) * 0.5 );
+			x.reserve(3);
+			x.emplace_back(x1, 0);
+			x.emplace_back(-(S + U) / 2 - b / (3.0 * a), (S - U) * sqrt(3) * 0.5);
+			x.emplace_back(-(S + U) / 2 - b / (3.0 * a), -(S - U) * sqrt(3) * 0.5);
 			return x;
 		}
 	}
@@ -155,7 +169,7 @@ private:
 
 		auto q = 12 * a * e - 3 * b * d + c * c;
 		auto s = 27 * a * d * d - 72 * a * c * e + 27 * b * b * e - 9 * b * c * d + 2 * pow(c, 3);
-		auto d0 = pow((s + sqrt(static_cast<std::complex<double>>(s * s - 4 * pow(q, 3)))) * 0.5, 1/3);
+		auto d0 = pow((s + sqrt(static_cast<std::complex<double>>(s * s - 4 * pow(q, 3)))) * 0.5, 1 / 3);
 		auto p = (8 * a * c - 3 * b * b) / (8 * a * a);
 
 		auto Q = sqrt(-2 / 3 * p + 1 / (3 * a) * (d0 + q / d0)) * 0.5;
@@ -164,11 +178,11 @@ private:
 		auto quozient = -b / (4 * a);
 
 		std::vector < std::complex < double >> x;
-        x.reserve(4);
-		x.emplace_back( quozient - Q + square );
-		x.emplace_back( quozient - Q - square );
-		x.emplace_back( quozient + Q + square );
-		x.emplace_back( quozient + Q - square );
+		x.reserve(4);
+		x.emplace_back(quozient - Q + square);
+		x.emplace_back(quozient - Q - square);
+		x.emplace_back(quozient + Q + square);
+		x.emplace_back(quozient + Q - square);
 		return x;
 	}
 
@@ -177,23 +191,11 @@ private:
 	auto genericMethod() {
 
 		std::vector < std::complex < double >> x;
-
+		
 		return x;
 	}
 
 public:
-
-	function() = default;
-
-	function(std::initializer_list<double> list) : coefficients(list) {}
-
-	template <number t> auto operator ()(t a) {
-		double b=0;
-		for (int i = 0; i < coefficients.size(); i++) {
-			b += coefficients[i]*pow(a, i);
-		}
-		return b;
-	}
 
 	auto zeroes() //assume grade is higher than 0
 	{
@@ -221,42 +223,3 @@ public:
 		}
 	}
 };
-
-int main()
-{
-	function a;
-	double input;
-	std::cout.precision(17);
-    while(true){
-        std::cout << "Type coefficients (type finally a no-double): ";
-        while (std::cin >> input) { a.coefficients.emplace_back(input); }
-
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
-        if (a.coefficients.empty()) { return 0; } //exit from loop
-
-        decltype(a.zeroes()) b;
-
-        try {
-            b = a.zeroes();
-        }
-        catch (solution& s) {
-            switch (s) {
-                case IMPOSSIBLE: std::cout << "impossible function"; continue;
-                case INDETERMINATE: std::cout << "indeterminate function"; continue;
-                default: std::cout << "Error in first grade function"; continue;
-            }
-        }
-
-        for (auto& element : b)
-        {
-            std::cout << element << "\t";
-        }
-
-        a.coefficients.clear();
-
-        std::cout << "\n";
-    }
-	return 0;
-}

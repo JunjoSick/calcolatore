@@ -9,4 +9,4 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # add the executable
-add_executable(${PROJ} equation_solver.cpp vampire_numbers.cpp "number_costraints.hpp")
+add_executable(${PROJ} "main.cpp" "vampire_numbers.cpp" "number_costraints.hpp" "function.cpp")
