@@ -275,10 +275,12 @@ public:
 			x = genericGrade();
 			break;
 		}
+
 		for (auto& i : x) {
-			if (i.real() <= zeroApproximation) i.real(0);
-			if (i.imag() <= zeroApproximation) i.imag(0);
+			if (abs(i.real()) <= zeroApproximation) i.real(0);
+			if (abs(i.imag()) <= zeroApproximation) i.imag(0);
 		}
+
 		return x;
 	}
 };
