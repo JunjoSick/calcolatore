@@ -1,19 +1,25 @@
+#pragma once
+
 #include <cmath>
 #include <complex>
+
+#include <random>
 
 #include <vector>
 #include <initializer_list>
 
-#include <limits>
-#include <concepts>
+#include <iostream>
 
-#include "number_costraints.hpp"
+#include "number_costraints.cpp"
 
 enum solution :unsigned char
 {
 	IMPOSSIBLE = 0,
 	INDETERMINATE
 };
+
+const double pi = 2.0 * acos(0.0);
+const double zeroApproximation = 1.e-15;
 
 class function
 {
@@ -24,8 +30,8 @@ public:
 	function() = default;
 
 	function(std::initializer_list<double> list) : coefficients(list) {}
-
-	template <number t> double operator ()(t a) {
+	//TODO to write number instead of typename
+	template <typename t> double operator ()(t a) {
 		double b = 0;
 		for (int i = 0; i < coefficients.size(); i++) {
 			b += coefficients[i] * pow(a, i);
@@ -33,8 +39,12 @@ public:
 		return b;
 	}
 
-	auto derivative() {
-		return ((*this)(1 + 1.e-15) - (*this)(1)) / 1.e-15;
+	inline auto degree() {
+		return coefficients.size() - 1;
+	}
+
+	auto derivative(double x) {
+		return ((*this)(x + 1.e-15) - (*this)(x)) / 1.e-15;
 	}
 
 private:
@@ -188,10 +198,54 @@ private:
 
 	//------------------fifth grade and higher------------------------
 
-	auto genericMethod() {
+	inline void getUpperLowerBounds(double& upper, double& lower) {
+		auto degree = this->degree();
+		auto max = *std::max_element(coefficients.begin(), coefficients.end(), [](double& a, double& b)
+			{
+				return abs(a) < abs(b);
+			});
+		upper = 1 + 1 / abs(coefficients[degree]) * max;
+		lower = abs(coefficients[0]) / (abs(coefficients[0]) + max);
+	}
 
-		std::vector < std::complex < double >> x;
-		
+	inline auto initializeRoots() {
+			auto degree = this->degree();
+			double upper, lower;
+			getUpperLowerBounds(upper, lower);
+
+			std::vector<std::complex<double>> roots;
+			roots.reserve(degree);
+
+			double radius, angle;
+
+			std::random_device rand;
+			std::uniform_real_distribution distribution;
+			for (int i = 0; i < degree; i++) {
+				distribution = std::uniform_real_distribution(lower, upper);
+				radius = distribution(rand);
+				distribution = std::uniform_real_distribution(0.0, pi*2);
+				angle = distribution(rand);
+				roots[i] = { radius * cos(angle), radius * sin(angle) };
+			}
+			return roots;
+	}
+	auto genericGrade() {
+		auto x = initializeRoots();
+		while (true){
+			unsigned int valid = 0;
+			double ratio;
+			std::complex<double> sum, offset;
+			for (int k = 0; k < x.size(); k++) {
+				ratio = (*this)(k) / this->derivative(k);
+				for (int j = 0; j < k; j++) {
+					sum += 1.0 / (x[k] - x[j]);
+				}
+				offset = ratio / (std::complex<double>(1,0) - ratio * sum);
+					if (offset.real() == 0 && offset.imag() == 0) valid += 1;
+				x[k] -= offset;
+			}
+			if (valid == coefficients.size()) break;
+		}
 		return x;
 	}
 
@@ -207,19 +261,33 @@ public:
 				x = firstGrade();
 			}
 			catch (solution& s) { throw s; }
-			return x;
+			break;
 		case 3:
 			x = secondGrade();
-			return x;
+			break;
 		case 4:
 			x = thirdGrade();
-			return x;
+			break;
 		case 5:
 			x = fourthGrade();
-			return x;
+			break;
 		default:
-			x = genericMethod();
-			return x;
+			x = genericGrade();
+			break;
 		}
+		for (auto& i : x) {
+			if (i.real() <= zeroApproximation) i.real(0);
+			if (i.imag() <= zeroApproximation) i.imag(0);
+		}
+		return x;
 	}
 };
+
+auto& operator << (std::ostream& out, function& a) {
+	out << std::showpos;
+	for (int i = 0; i <a.coefficients.size(); i++) {
+		out <<a.coefficients[i] << "x^" << a.degree()-i  << " ";
+	}
+	out << std::noshowpos;
+	return out;
+}

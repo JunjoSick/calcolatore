@@ -1,11 +1,12 @@
+#pragma once
+
 #include <cmath>
 
 #include <cstdint>
 
-#include <concepts>
+#include "number_costraints.cpp"
 
-#include "number_costraints.hpp"
-
-template <natural t> bool isVampire(t a) { //suppose a is greater than 1000 
-	return true;
+template <natural t> bool isVampire(t a) {
+	if ((trunc(log10(a)) + 1) ^ 1) return false; //if the digits are odd false
+	 
 }
