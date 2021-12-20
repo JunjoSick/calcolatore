@@ -10,8 +10,6 @@
 
 #include <iostream>
 
-#include "number_costraints.cpp"
-
 enum solution :unsigned char
 {
 	IMPOSSIBLE = 0,
@@ -29,7 +27,7 @@ public:
 
 	function() = default;
 
-	function(std::initializer_list<double> list) : coefficients(list) {}
+    [[maybe_unused]] function(std::initializer_list<double> list) : coefficients(list) {}
 	//TODO to write number instead of typename
 	template <typename t> double operator ()(t a) {
 		double b = 0;
@@ -39,7 +37,7 @@ public:
 		return b;
 	}
 
-	inline auto degree() {
+	[[nodiscard]] inline auto degree() const {
 		return coefficients.size() - 1;
 	}
 
@@ -88,17 +86,18 @@ private:
 
 		return x;
 	}
+
 	//--------------------- Third grade----------------------
-	inline auto findF(double a, double b, double c)
+	static inline auto findF(double a, double b, double c)
 	{
 		return (3.0 * c / a - pow(b, 2) / pow(a, 2)) / 3.0;
 	}
-	inline auto findG(double a, double b, double c, double d)
+	static inline auto findG(double a, double b, double c, double d)
 	{
 		return (2.0 * pow(b, 3) / pow(a, 3) - 9.0 * b * c / pow(a, 2) +
 			27.0 * d / a) / 27.0;
 	}
-	inline auto findH(double g, double f)
+	static inline auto findH(double g, double f)
 	{
 		return pow(g, 2) / 4.0 + pow(f, 3) / 27.0;
 	}
@@ -116,7 +115,8 @@ private:
 		std::vector < std::complex < double >> x;
 		double x1;
 		if (f == 0 && g == 0 && h == 0)
-		{				// All 3 Roots are Real and Equal
+		{
+            // All 3 Roots are Real and Equal
 			if ((d / a) >= 0)
 			{
 				x1 = pow((d / (1.0 * a)), (1 / 3.0)) * -1;
@@ -132,7 +132,8 @@ private:
 			return x;
 		}
 		else if (h <= 0)
-		{				// All 3 roots are Real
+		{
+            // All 3 roots are Real
 			double i = sqrt(pow(g, 2) / 4.0 - h);
 			double j = pow(i, 1 / 3.0);
 			double k = acos(-(g / (2 * i)));
@@ -182,7 +183,7 @@ private:
 		auto d0 = pow((s + sqrt(static_cast<std::complex<double>>(s * s - 4 * pow(q, 3)))) * 0.5, 1 / 3);
 		auto p = (8 * a * c - 3 * b * b) / (8 * a * a);
 
-		auto Q = sqrt(-2 / 3 * p + 1 / (3 * a) * (d0 + q / d0)) * 0.5;
+		auto Q = sqrt(-2.0 / 3 * p + 1 / (3 * a) * (d0 + q / d0)) * 0.5;
 		auto S = (8 * a * a * d - 4 * a * b * c + pow(b, 3)) / (8 * pow(a, 3));
 		auto square = 0.5 * sqrt(-4.0 * Q * Q - 2 * p + S / Q);
 		auto quozient = -b / (4 * a);
@@ -202,10 +203,10 @@ private:
 		auto degree = this->degree();
 		auto max = *std::max_element(coefficients.begin(), coefficients.end(), [](double& a, double& b)
 			{
-				return abs(a) < abs(b);
+				return std::abs(a) < std::abs(b);
 			});
-		upper = 1 + 1 / abs(coefficients[degree]) * max;
-		lower = abs(coefficients[0]) / (abs(coefficients[0]) + max);
+		upper = 1 + 1 / std::abs(coefficients[degree]) * max;
+		lower = std::abs(coefficients[0]) / (std::abs(coefficients[0]) + max);
 	}
 
 	inline auto initializeRoots() {
@@ -277,8 +278,8 @@ public:
 		}
 
 		for (auto& i : x) {
-			if (abs(i.real()) <= zeroApproximation) i.real(0);
-			if (abs(i.imag()) <= zeroApproximation) i.imag(0);
+			if (std::abs(i.real()) <= zeroApproximation) i.real(0);
+			if (std::abs(i.imag()) <= zeroApproximation) i.imag(0);
 		}
 
 		return x;
