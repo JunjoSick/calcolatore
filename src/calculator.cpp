@@ -8,8 +8,6 @@
 #include <vector>
 #include <initializer_list>
 
-#include <iostream>
-
 enum solution :unsigned char
 {
 	IMPOSSIBLE = 0,
@@ -19,15 +17,15 @@ enum solution :unsigned char
 const double pi = 2.0 * acos(0.0);
 const double zeroApproximation = 1.e-15;
 
-class function
+class calculator
 {
 public:
 
 	std::vector < double > coefficients;
 
-	function() = default;
+	calculator() = default;
 
-    [[maybe_unused]] function(std::initializer_list<double> list) : coefficients(list) {}
+    [[maybe_unused]] calculator(std::initializer_list<double> list) : coefficients(list) {}
 	//TODO to write number instead of typename
 	template <typename t> double operator ()(t a) {
 		double b = 0;
@@ -285,12 +283,3 @@ public:
 		return x;
 	}
 };
-
-auto& operator << (std::ostream& out, function& a) {
-	out << std::showpos;
-	for (int i = 0; i <a.coefficients.size(); i++) {
-		out <<a.coefficients[i] << "x^" << a.degree()-i  << " ";
-	}
-	out << std::noshowpos;
-	return out;
-}

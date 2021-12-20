@@ -4,13 +4,15 @@
 
 #include <limits>
 
-#include "function.cpp"
+//TODO: This should be changed to include header files and not the cpp ones.
+#include "calculator.cpp"
+#include "utils.cpp"
 
 #define reset a.coefficients.clear();std::cout << "\n";
 
 int main()
 {
-	function a;
+	calculator a;
 	double input;
 	std::cout.precision(17);
     while(true){
@@ -35,9 +37,9 @@ int main()
         }
         catch (solution& s) {
             switch (s) {
-                case IMPOSSIBLE: std::cout << "impossible function\n"; reset continue;
-                case INDETERMINATE: std::cout << "indeterminate function\n"; reset continue;
-                default: std::cout << "Error in first grade function\n"; reset continue;
+                case IMPOSSIBLE: std::cout << "impossible calculator\n"; reset continue;
+                case INDETERMINATE: std::cout << "indeterminate calculator\n"; reset continue;
+                default: std::cout << "Error in first grade calculator\n"; reset continue;
             }
         }
 
@@ -48,5 +50,4 @@ int main()
 
         reset
     }
-	return 0;
 }

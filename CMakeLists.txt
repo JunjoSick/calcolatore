@@ -13,4 +13,4 @@ add_link_options( /FORCE:MULTIPLE )
 endif()
 
 # add the executable
-add_executable(${PROJ} "src/main.cpp" "src/vampire_numbers.cpp" "src/number_costraints.cpp" "src/function.cpp")
+add_executable(${PROJ} "src/main.cpp" "src/vampire_numbers.cpp" "src/number_costraints.cpp" "src/calculator.cpp" src/utils.cpp)
