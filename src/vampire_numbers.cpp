@@ -2,8 +2,6 @@
 
 #include <cmath>
 
-#include <cstdint>
-
 #include "number_costraints.cpp"
 
 template <natural t> bool isVampire(t a) {

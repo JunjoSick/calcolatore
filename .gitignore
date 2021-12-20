@@ -52,6 +52,7 @@ CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
 CMakeScripts
+cmake-build-debug
 Testing
 Makefile
 cmake_install.cmake

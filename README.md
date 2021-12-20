@@ -6,10 +6,10 @@ bool isVampire(natural number);
 ```
 ## Classes:
 ```cpp
-function linearEquation;
-function quadraticEquation;
-function cubicEquation;
-function quarticEquation;
+calculator linearEquation;
+calculator quadraticEquation;
+calculator cubicEquation;
+calculator quarticEquation;
 
 linearEquation = {3, 5}; // 3 and 5 are coefficients, 3x+5=0
 std::vector<std::complex<double>> solution = linearEquation.zeroes(); //{-5/3,0}

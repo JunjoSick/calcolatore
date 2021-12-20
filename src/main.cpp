@@ -4,19 +4,20 @@
 
 #include <limits>
 
-#include "function.cpp"
+//TODO: This should be changed to include header files and not the cpp ones.
+#include "calculator.cpp"
+#include "utils.cpp"
 
 #define reset a.coefficients.clear();std::cout << "\n";
 
 int main()
 {
-	function a;
+	calculator a;
 	double input;
 	std::cout.precision(17);
     while(true){
         std::cout << "Type coefficients: ";
         while((std::cin.peek() != '\n') && std::cin >> input) { a.coefficients.emplace_back(input); }
-
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
@@ -48,5 +49,4 @@ int main()
 
         reset
     }
-	return 0;
 }
