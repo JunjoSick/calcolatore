@@ -18,7 +18,6 @@ int main()
     while(true){
         std::cout << "Type coefficients: ";
         while((std::cin.peek() != '\n') && std::cin >> input) { a.coefficients.emplace_back(input); }
-
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 

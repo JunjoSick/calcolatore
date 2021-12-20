@@ -218,12 +218,11 @@ private:
 			double radius, angle;
 
 			std::random_device rand;
-			std::uniform_real_distribution distribution;
+			std::uniform_real_distribution lowerUpperDistribution = std::uniform_real_distribution(lower, upper);
+            std::uniform_real_distribution piDistribution = std::uniform_real_distribution(0.0, pi*2);
 			for (int i = 0; i < degree; i++) {
-				distribution = std::uniform_real_distribution(lower, upper);
-				radius = distribution(rand);
-				distribution = std::uniform_real_distribution(0.0, pi*2);
-				angle = distribution(rand);
+				radius = lowerUpperDistribution(rand);
+				angle = piDistribution(rand);
 				roots[i] = { radius * cos(angle), radius * sin(angle) };
 			}
 			return roots;
