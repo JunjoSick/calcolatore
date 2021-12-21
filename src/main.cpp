@@ -4,13 +4,14 @@
 
 #include <limits>
 
-#include "function.cpp"
+#include "calculator.cpp"
+#include "utils.cpp"
 
 #define reset a.coefficients.clear();std::cout << "\n";
 
 int main()
 {
-	function a;
+	calculator a;
 	double input;
 	std::cout.precision(17);
     while(true){
