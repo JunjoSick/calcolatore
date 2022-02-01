@@ -4,7 +4,7 @@
 
 #include <list>
 
-#include "number_costraints.cpp"
+#include "numberCostraints.cpp"
 
 template <natural t> bool isVampire(t a) {
 	unsigned short lenght = trunc(log10(a)) + 1;
