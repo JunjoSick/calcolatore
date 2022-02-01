@@ -1,5 +1,5 @@
 # Calculator
-A program to solve equations from 1st to 4th (5th and higher wip) grade and determine vampire numbers
+A program to solve equations from 1st to n-grade, determine vampire numbers and solve systems of equations
 ## Functions:
 ```cpp
 bool isVampire(natural number);
